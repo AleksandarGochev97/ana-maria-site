@@ -3,32 +3,51 @@ const TeachingSection = () => {
     <section id="teaching" className="container py-16 md:py-20">
       <div className="grid gap-10 md:grid-cols-2">
         <div>
-          <h2 className="font-display text-3xl md:text-4xl">Преподаване</h2>
+          <h2 className="font-display text-3xl md:text-4xl">Уроци в София</h2>
           <p className="mt-4 text-sm leading-relaxed text-foreground/80 md:text-base">
-            Уроци по музика, изградени върху класическа школа и артистична свобода.
-            Занятията са <span className="font-medium text-foreground">само присъствено</span> в гр. София.
+            Уроци, изградени върху класическа школа и ясна структура: техника, музикалност,
+            сценично присъствие. Занятията са <span className="font-medium text-foreground">само присъствено</span>.
           </p>
 
           <div className="mt-6 grid gap-4">
             <div className="rounded-2xl border border-border/70 bg-card/60 p-6">
-              <p className="font-medium text-foreground">Дисциплини</p>
+              <p className="text-xs tracking-[0.25em] text-foreground/60">ДИСЦИПЛИНИ</p>
+              <p className="mt-3 font-medium text-foreground">Флейта • Пиано • Солфеж • Оперно пеене</p>
               <p className="mt-2 text-sm text-foreground/70">
-                Флейта • Пиано • Солфеж • Оперно пеене
+                Фокус върху стабилни основи и репертоар, съобразен с възрастта и целите.
               </p>
             </div>
+
             <div className="rounded-2xl border border-border/70 bg-card/60 p-6">
-              <p className="font-medium text-foreground">За кого са подходящи</p>
+              <p className="text-xs tracking-[0.25em] text-foreground/60">ЗА КОГО</p>
+              <p className="mt-3 font-medium text-foreground">Начинаещи и напреднали</p>
               <p className="mt-2 text-sm text-foreground/70">
-                За всички възрасти – деца, ученици, студенти и възрастни, както начинаещи,
-                така и напреднали.
+                Деца, ученици, студенти и възрастни — с индивидуален план и ясна обратна връзка.
               </p>
             </div>
+
             <div className="rounded-2xl border border-border/70 bg-card/60 p-6">
-              <p className="font-medium text-foreground">Подготовка</p>
+              <p className="text-xs tracking-[0.25em] text-foreground/60">ПОДГОТОВКА</p>
+              <p className="mt-3 font-medium text-foreground">Изпити • конкурси • прослушвания</p>
               <p className="mt-2 text-sm text-foreground/70">
-                Подготовка за конкурси, изпити, прослушвания и сценична практика (според целите на ученика).
+                Подготовка за конкретна цел — програма, темпо на работа и сценична практика.
               </p>
             </div>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#contact"
+              className="w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:w-auto"
+            >
+              Запази час
+            </a>
+            <a
+              href="#contact"
+              className="w-full rounded-full border border-border/70 bg-card/60 px-6 py-3 text-center text-sm font-medium text-foreground transition hover:bg-card sm:w-auto"
+            >
+              Задай въпрос
+            </a>
           </div>
         </div>
 
@@ -43,10 +62,10 @@ const TeachingSection = () => {
           </div>
 
           <div className="mt-6 rounded-2xl border border-border/70 bg-secondary/40 p-6">
-            <p className="text-xs tracking-[0.25em] text-foreground/70">ЛОКАЦИЯ</p>
-            <p className="mt-3 font-display text-xl">София</p>
+            <p className="text-xs tracking-[0.25em] text-foreground/70">ПРАКТИЧНО</p>
+            <p className="mt-3 font-display text-xl">Свободни часове</p>
             <p className="mt-1 text-sm text-foreground/70">
-              За график и свободни часове – използвай формата за контакт.
+              Пиши ми в контакт формата — ще върна отговор с възможни дни и часове.
             </p>
           </div>
         </div>

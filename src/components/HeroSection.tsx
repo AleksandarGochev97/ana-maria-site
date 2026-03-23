@@ -21,48 +21,62 @@ const HeroSection = () => {
             backgroundSize: "240px 240px",
           }}
         />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-transparent to-background/85" />
+        <div className="absolute inset-0 bg-wine/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-wine/35 via-wine/65 to-ivory" />
       </div>
 
-      <div className="container relative z-10 flex min-h-[78vh] items-center py-20 md:min-h-[86vh] md:py-28">
-        <div className="max-w-3xl rounded-[2rem] border border-white/10 bg-black/25 p-8 backdrop-blur-sm md:p-10">
-          <p className="text-xs tracking-[0.25em] text-white/75">SOFIA • BULGARIA</p>
-          <h1 className="mt-4 font-display text-4xl leading-tight text-white md:text-6xl">
+      <div className="container relative z-10 flex min-h-[78vh] items-center justify-center py-20 text-center md:min-h-[86vh] md:py-28">
+        <div className="mx-auto max-w-4xl">
+          <h1
+            className="mt-7 font-display text-4xl leading-[1.02] text-ivory md:text-6xl"
+            style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
+          >
             Ана-Мария Крайчева
           </h1>
-          <p className="mt-4 text-sm text-white/85 md:text-base">
-            Флейтистка • Оперна певица • Пианистка
+
+          <p className="mt-3 text-[11px] font-medium tracking-[0.34em] text-gold/90 md:text-xs">
+            ОПЕРНА ПЕВИЦА •{" "}
+            <span className="relative inline-block px-1">
+              ФЛЕЙТИСТКА
+              <span className="absolute left-1/2 top-full mt-2 h-px w-10 -translate-x-1/2 bg-gold/70" />
+            </span>{" "}
+            • ПИАНИСТКА
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="#performances"
-              className="w-full rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:w-auto"
+          <div className="mt-8 space-y-2">
+            <p
+              className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
+              style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Виж изпълнения
-            </a>
-            <a
-              href="#teaching"
-              className="w-full rounded-full border border-border/70 bg-card/60 px-6 py-3 text-sm font-medium text-foreground transition hover:bg-card sm:w-auto"
+              Елегантност в операта.
+            </p>
+            <p
+              className="font-display text-4xl italic leading-[1.02] text-gold md:text-7xl"
+              style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Уроци и подготовка
-            </a>
+              Магия с флейтата.
+            </p>
+            <p
+              className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
+              style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
+            >
+              Цял живот в музиката.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-3 text-left md:grid-cols-3">
-            <div className="rounded-2xl border border-border/70 bg-card/60 p-5">
-              <p className="font-display text-lg">20+ години</p>
-              <p className="mt-1 text-sm text-foreground/70">сценичен и педагогически опит</p>
-            </div>
-            <div className="rounded-2xl border border-border/70 bg-card/60 p-5">
-              <p className="font-display text-lg">3 висши</p>
-              <p className="mt-1 text-sm text-foreground/70">образования, свързани с музиката</p>
-            </div>
-            <div className="rounded-2xl border border-border/70 bg-card/60 p-5">
-              <p className="font-display text-lg">Присъствено</p>
-              <p className="mt-1 text-sm text-foreground/70">уроци за всички възрасти</p>
-            </div>
+          <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <a
+              href="#performances"
+              className="w-full rounded-md bg-gold px-8 py-3 text-sm font-semibold text-wine transition hover:bg-gold/90 sm:w-auto"
+            >
+              ИЗПЪЛНЕНИЯ
+            </a>
+            <a
+              href="#contact"
+              className="w-full rounded-md border border-ivory/25 bg-white/5 px-8 py-3 text-sm font-semibold text-ivory transition hover:bg-white/10 sm:w-auto"
+            >
+              РЕЗЕРВИРАЙ
+            </a>
           </div>
         </div>
       </div>

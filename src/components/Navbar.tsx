@@ -1,36 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const navItems = [
-  { label: "За Ана-Мария", href: "#about" },
-  { label: "Образование", href: "#education" },
-  { label: "Изпълнения", href: "#performances" },
-  { label: "Преподаване", href: "#teaching" },
-  { label: "Галерия", href: "#gallery" },
-  { label: "Контакт", href: "#contact" },
+  { label: "НАЧАЛО", href: "#" },
+  { label: "ЗА МЕН", href: "#about" },
+  { label: "ИЗПЪЛНЕНИЯ", href: "#performances" },
+  { label: "ОБУЧЕНИЕ", href: "#teaching" },
+  { label: "ГАЛЕРИЯ", href: "#gallery" },
+  { label: "КОНТАКТИ", href: "#contact" },
 ];
 
-const languages = ["BG", "IT", "EN"] as const;
-
-type Lang = (typeof languages)[number];
-
 const Navbar = () => {
-  const [lang, setLang] = useState<Lang>("BG");
   const [imageOk, setImageOk] = useState(true);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("site_lang") as Lang | null;
-    if (stored && languages.includes(stored)) setLang(stored);
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("site_lang", lang);
-  }, [lang]);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-wine/70 backdrop-blur supports-[backdrop-filter]:bg-wine/60">
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gold/50 bg-secondary/40">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gold/40 bg-white/5">
             {imageOk ? (
               <img
                 alt="Ана-Мария Крайчева"
@@ -39,29 +26,29 @@ const Navbar = () => {
                 onError={() => setImageOk(false)}
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center font-display text-sm text-foreground/80">
+              <div className="flex h-full w-full items-center justify-center font-display text-sm text-ivory/80">
                 AK
               </div>
             )}
-            <div className="pointer-events-none absolute inset-0 ring-1 ring-gold/30" />
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-gold/25" />
           </div>
 
           <div className="leading-tight">
-            <div className="font-display text-sm tracking-wide md:text-base">
-              Ana-Maria <span className="text-primary">Kraycheva</span>
+            <div className="font-display text-sm tracking-wide text-ivory md:text-base">
+              ♪ Ана-Мария Крайчева
             </div>
-            <div className="hidden text-xs text-foreground/60 md:block">
-              Flutist • Opera Singer • Pianist
+            <div className="hidden text-xs text-ivory/65 md:block">
+              Оперна певица • Флейтистка • Пианистка
             </div>
           </div>
         </a>
 
-        <nav className="hidden items-center gap-6 text-sm md:flex">
+        <nav className="hidden items-center gap-6 text-xs font-medium tracking-[0.22em] text-ivory/80 md:flex">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-foreground/80 transition hover:text-foreground"
+              className="transition hover:text-ivory"
             >
               {item.label}
             </a>
@@ -69,32 +56,73 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <div className="hidden rounded-full border border-border/70 bg-card/60 p-1 md:flex">
-            {languages.map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setLang(l)}
-                className={
-                  "rounded-full px-3 py-1 text-xs transition " +
-                  (lang === l
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:text-foreground")
-                }
-              >
-                {l}
-              </button>
-            ))}
-          </div>
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Затвори меню" : "Отвори меню"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-ivory/15 bg-white/5 text-ivory transition hover:bg-white/10 md:hidden"
+          >
+            <span className="text-lg leading-none">☰</span>
+          </button>
 
           <a
             href="#contact"
-            className="rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:bg-primary/90"
+            className="hidden rounded-md border border-ivory/25 bg-white/5 px-4 py-2 text-xs font-medium text-ivory transition hover:bg-white/10 md:inline-flex"
           >
-            Свържи се
+            Запитване за участие
+          </a>
+
+          <a
+            href="#contact"
+            className="rounded-md bg-gold px-4 py-2 text-xs font-medium text-wine transition hover:bg-gold/90"
+          >
+            Запази час
           </a>
         </div>
       </div>
+
+      {mobileOpen ? (
+        <div className="md:hidden">
+          <div
+            className="fixed inset-0 z-40 bg-black/40"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute left-0 right-0 top-full z-50 border-b border-white/10 bg-wine/95 backdrop-blur">
+            <div className="container py-4">
+              <nav className="grid gap-3 text-xs font-medium tracking-[0.22em] text-ivory/85">
+                {navItems.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-md px-3 py-3 transition hover:bg-white/10"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+
+              <div className="mt-4 grid gap-2">
+                <a
+                  href="#contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full rounded-md border border-ivory/25 bg-white/5 px-4 py-3 text-center text-xs font-medium text-ivory transition hover:bg-white/10"
+                >
+                  Запитване за участие
+                </a>
+                <a
+                  href="#contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full rounded-md bg-gold px-4 py-3 text-center text-xs font-medium text-wine transition hover:bg-gold/90"
+                >
+                  Запази час
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 };

@@ -5,10 +5,12 @@
 body {
   background-color: hsl(38 33% 97%);
   color: hsl(222.2 47.4% 11.2%);
+  overflow-x: hidden;
 }
 
 #root {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 @layer base {
@@ -43,8 +45,8 @@ body {
 
     --radius: 0.75rem;
 
-    --wine: 352 35% 28%;
-    --wine-light: 352 30% 36%;
+    --wine: 352 35% 14%;
+    --wine-light: 352 30% 22%;
     --gold: 44 55% 55%;
     --gold-light: 44 55% 70%;
     --gold-glow: 44 80% 80%;
