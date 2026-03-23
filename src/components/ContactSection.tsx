@@ -2,8 +2,32 @@ import { useState } from "react";
 
 type ContactMode = "lessons" | "performances";
 
+const timeSlots = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
+] as const;
+
+const getTodayIso = () => {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const ContactSection = () => {
   const [mode, setMode] = useState<ContactMode>("lessons");
+  const [lessonDate, setLessonDate] = useState<string>(getTodayIso());
+  const [lessonTime, setLessonTime] = useState<string>("");
 
   return (
     <section id="contact" className="relative py-16 md:py-20">
@@ -141,17 +165,87 @@ const ContactSection = () => {
                     </div>
                   </div>
                   <div>
-                    <label
-                      htmlFor="contact-availability"
-                      className="text-xs font-medium tracking-[0.22em] text-warm-gray"
-                    >
+                    <label className="text-xs font-medium tracking-[0.22em] text-warm-gray">
                       ПРЕДПОЧИТАНИ ДНИ/ЧАСОВЕ
                     </label>
-                    <input
-                      id="contact-availability"
-                      className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
-                      placeholder="Напр. делнични след 17:00 или събота"
-                    />
+
+                    <div className="mt-3 grid gap-4">
+                      <div className="grid gap-5 md:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="lesson-date"
+                            className="text-xs font-medium tracking-[0.22em] text-warm-gray"
+                          >
+                            ДАТА
+                          </label>
+                          <input
+                            id="lesson-date"
+                            type="date"
+                            min={getTodayIso()}
+                            value={lessonDate}
+                            onChange={(e) => {
+                              setLessonDate(e.target.value);
+                              setLessonTime("");
+                            }}
+                            className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                          />
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-medium tracking-[0.22em] text-warm-gray">СВОБОДНИ ЧАСОВЕ</p>
+                          <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                            {timeSlots.map((slot) => {
+                              const now = new Date();
+                              const todayIso = getTodayIso();
+                              const [hh, mm] = slot.split(":").map((x) => Number(x));
+                              const slotDate = new Date(`${lessonDate}T00:00:00`);
+                              slotDate.setHours(hh, mm, 0, 0);
+
+                              const isPastForToday = lessonDate === todayIso && slotDate.getTime() <= now.getTime();
+                              const unavailable = isPastForToday;
+                              const active = lessonTime === slot;
+
+                              return (
+                                <button
+                                  key={slot}
+                                  type="button"
+                                  disabled={unavailable}
+                                  onClick={() => setLessonTime(slot)}
+                                  className={
+                                    "rounded-lg border px-3 py-2 text-xs font-semibold tracking-[0.12em] transition " +
+                                    (unavailable
+                                      ? "cursor-not-allowed border-border/60 bg-background/30 text-foreground/35"
+                                      : active
+                                        ? "border-gold/50 bg-gold/15 text-wine"
+                                        : "border-border/70 bg-background/50 text-foreground hover:bg-background/70")
+                                  }
+                                  aria-pressed={active}
+                                >
+                                  {slot}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="contact-availability" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
+                          ДРУГО (ОПЦИОНАЛНО)
+                        </label>
+                        <input
+                          id="contact-availability"
+                          className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                          placeholder="Напр. само събота, или след 17:30"
+                        />
+
+                        {(lessonDate || lessonTime) && (
+                          <p className="mt-2 text-xs text-foreground/60">
+                            Избрано: {lessonDate ? lessonDate : "—"} • {lessonTime ? lessonTime : "час"}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </>
               ) : (
