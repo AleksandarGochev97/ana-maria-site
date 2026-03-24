@@ -7,10 +7,11 @@ import TeachingSection from "@/components/TeachingSection";
 import GallerySection from "@/components/GallerySection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background pt-16 text-foreground">
       <Navbar />
       <main>
         <HeroSection />
@@ -21,6 +22,7 @@ const Index = () => {
         <GallerySection />
         <ContactSection />
       </main>
+      <ScrollToTopButton />
       <Footer />
     </div>
   );

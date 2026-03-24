@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type ContactMode = "lessons" | "performances";
 
@@ -24,10 +24,173 @@ const getTodayIso = () => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+type BookingType = "lesson" | "performance";
+type BookingStatus = "pending" | "confirmed" | "rejected";
+
+type BookingRow = {
+  id: string;
+  booking_type: BookingType;
+  date: string;
+  time: string;
+  status: BookingStatus;
+};
+
+const normalizeTime = (t: string) => t.slice(0, 5);
+
+const FALLBACK_SUPABASE_URL = "https://xuxrslpqugrbjqwvezbc.supabase.co";
+const FALLBACK_SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1eHJzbHBxdWdyYmpxd3ZlemJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA1MTcsImV4cCI6MjA4OTg0NjUxN30.OX2wGIrk_OA7oaIqhBzvWWjkIoKcWg1MAlTC8omjQng";
+
 const ContactSection = () => {
   const [mode, setMode] = useState<ContactMode>("lessons");
+
+  const supabaseUrl =
+    (import.meta.env.VITE_SUPABASE_URL as string | undefined) || FALLBACK_SUPABASE_URL;
+  const supabaseAnonKey =
+    (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ||
+    FALLBACK_SUPABASE_ANON_KEY;
+
   const [lessonDate, setLessonDate] = useState<string>(getTodayIso());
   const [lessonTime, setLessonTime] = useState<string>("");
+
+  const [performanceDate, setPerformanceDate] = useState<string>(getTodayIso());
+  const [performanceTime, setPerformanceTime] = useState<string>("");
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [instrument, setInstrument] = useState("Флейта");
+  const [level, setLevel] = useState("Начинаещ");
+  const [availabilityOther, setAvailabilityOther] = useState("");
+
+  const [performanceLocation, setPerformanceLocation] = useState("");
+  const [performanceFormat, setPerformanceFormat] = useState("");
+
+  const bookingType: BookingType = mode === "lessons" ? "lesson" : "performance";
+  const selectedDate = mode === "lessons" ? lessonDate : performanceDate;
+
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitOk, setSubmitOk] = useState(false);
+
+  const canUseSupabase = Boolean(supabaseUrl && supabaseAnonKey);
+
+  const envDebug = {
+    url: supabaseUrl || "(липсва)",
+    key: supabaseAnonKey ? `${supabaseAnonKey.slice(0, 8)}...` : "(липсва)",
+  };
+
+  const bookedTimeSet = useMemo(() => new Set(bookedTimes), [bookedTimes]);
+
+  const fetchAvailability = async (date: string, type: BookingType) => {
+    if (!canUseSupabase || !supabaseUrl || !supabaseAnonKey) return;
+
+    setLoadingAvailability(true);
+    setSubmitError(null);
+
+    try {
+      const url = new URL(`${supabaseUrl}/rest/v1/bookings`);
+      url.searchParams.set("select", "time,status");
+      url.searchParams.set("booking_type", `eq.${type}`);
+      url.searchParams.set("date", `eq.${date}`);
+      url.searchParams.set("status", "in.(pending,confirmed)");
+
+      const res = await fetch(url.toString(), {
+        headers: {
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `HTTP ${res.status}`);
+      }
+
+      const rows = (await res.json()) as Pick<BookingRow, "time" | "status">[];
+      setBookedTimes(rows.map((r) => normalizeTime(r.time)));
+    } catch (err) {
+      setBookedTimes([]);
+      setSubmitError(err instanceof Error ? err.message : "Грешка при зареждане на заетостта.");
+    } finally {
+      setLoadingAvailability(false);
+    }
+  };
+
+  useEffect(() => {
+    void fetchAvailability(selectedDate, bookingType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, bookingType, canUseSupabase]);
+
+  const createBooking = async (payload: Record<string, unknown>) => {
+    if (!canUseSupabase || !supabaseUrl || !supabaseAnonKey) {
+      throw new Error("Supabase не е конфигуриран. Добави VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY.");
+    }
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      if (text.includes("duplicate key") || text.includes("23505") || text.includes("bookings_unique_slot")) {
+        throw new Error("Този слот вече е зает. Избери друга дата или час.");
+      }
+
+      throw new Error(text || `HTTP ${res.status}`);
+    }
+
+    return (await res.json()) as BookingRow[];
+  };
+
+  const onSubmit = async () => {
+    setSubmitOk(false);
+    setSubmitError(null);
+
+    const date = selectedDate;
+    const time = mode === "lessons" ? lessonTime : performanceTime;
+
+    if (!name.trim()) return setSubmitError("Моля, въведи име.");
+    if (!email.trim()) return setSubmitError("Моля, въведи имейл.");
+    if (!date) return setSubmitError("Моля, избери дата.");
+    if (!time) return setSubmitError("Моля, избери час.");
+    if (bookedTimeSet.has(time)) return setSubmitError("Този час вече е зает. Избери друг.");
+
+    try {
+      await createBooking({
+        booking_type: bookingType,
+        date,
+        time,
+        status: "pending" satisfies BookingStatus,
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        instrument: bookingType === "lesson" ? instrument : null,
+        level: bookingType === "lesson" ? level : null,
+        availability_other: bookingType === "lesson" ? availabilityOther.trim() : null,
+        location: bookingType === "performance" ? performanceLocation.trim() : null,
+        format: bookingType === "performance" ? performanceFormat.trim() : null,
+      });
+
+      setSubmitOk(true);
+      setLessonTime("");
+      setPerformanceTime("");
+      setMessage("");
+
+      await fetchAvailability(date, bookingType);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Грешка при запазване.");
+    }
+  };
 
   return (
     <section id="contact" className="relative py-16 md:py-20">
@@ -104,7 +267,7 @@ const ContactSection = () => {
           </div>
 
           <div className="rounded-[1.75rem] border border-border/70 bg-card/70 p-6 shadow-sm md:p-8">
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label htmlFor="contact-name" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
@@ -114,6 +277,8 @@ const ContactSection = () => {
                     id="contact-name"
                     className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
                     placeholder="Вашето име"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
 
@@ -126,6 +291,8 @@ const ContactSection = () => {
                     className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
                     placeholder="you@example.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -143,6 +310,8 @@ const ContactSection = () => {
                       <select
                         id="contact-instrument"
                         className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                        value={instrument}
+                        onChange={(e) => setInstrument(e.target.value)}
                       >
                         <option>Флейта</option>
                         <option>Пиано</option>
@@ -157,6 +326,8 @@ const ContactSection = () => {
                       <select
                         id="contact-level"
                         className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                        value={level}
+                        onChange={(e) => setLevel(e.target.value)}
                       >
                         <option>Начинаещ</option>
                         <option>Средно</option>
@@ -202,7 +373,8 @@ const ContactSection = () => {
                               slotDate.setHours(hh, mm, 0, 0);
 
                               const isPastForToday = lessonDate === todayIso && slotDate.getTime() <= now.getTime();
-                              const unavailable = isPastForToday;
+                              const isBooked = bookedTimeSet.has(slot);
+                              const unavailable = isPastForToday || isBooked;
                               const active = lessonTime === slot;
 
                               return (
@@ -226,6 +398,17 @@ const ContactSection = () => {
                               );
                             })}
                           </div>
+                          {loadingAvailability ? (
+                            <p className="mt-2 text-xs text-foreground/60">Зареждане на заетост...</p>
+                          ) : null}
+                          {!canUseSupabase ? (
+                            <p className="mt-2 text-xs text-foreground/60">
+                              Supabase не е конфигуриран. Провери `.env.local`:
+                              <span className="ml-1 font-mono">
+                                VITE_SUPABASE_URL={envDebug.url} • VITE_SUPABASE_ANON_KEY={envDebug.key}
+                              </span>
+                            </p>
+                          ) : null}
                         </div>
                       </div>
 
@@ -237,6 +420,8 @@ const ContactSection = () => {
                           id="contact-availability"
                           className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
                           placeholder="Напр. само събота, или след 17:30"
+                          value={availabilityOther}
+                          onChange={(e) => setAvailabilityOther(e.target.value)}
                         />
 
                         {(lessonDate || lessonTime) && (
@@ -258,7 +443,13 @@ const ContactSection = () => {
                       <input
                         id="contact-date"
                         className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
-                        placeholder="Напр. 12.06.2026"
+                        type="date"
+                        min={getTodayIso()}
+                        value={performanceDate}
+                        onChange={(e) => {
+                          setPerformanceDate(e.target.value);
+                          setPerformanceTime("");
+                        }}
                       />
                     </div>
                     <div>
@@ -272,18 +463,42 @@ const ContactSection = () => {
                         id="contact-location"
                         className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
                         placeholder="Напр. София, клуб/сцена"
+                        value={performanceLocation}
+                        onChange={(e) => setPerformanceLocation(e.target.value)}
                       />
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="contact-format" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                      ФОРМАТ
-                    </label>
-                    <input
-                      id="contact-format"
-                      className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
-                      placeholder="Рецитал / събитие / концерт / заведение"
-                    />
+                    <div className="grid gap-5 md:grid-cols-2">
+                      <div>
+                        <label htmlFor="contact-performance-time" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
+                          ЧАС (НАЧАЛО)
+                        </label>
+                        <input
+                          id="contact-performance-time"
+                          type="time"
+                          value={performanceTime}
+                          onChange={(e) => setPerformanceTime(e.target.value)}
+                          className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                        />
+                        {performanceTime && bookedTimeSet.has(performanceTime) ? (
+                          <p className="mt-2 text-xs text-destructive">Този час вече е зает за избраната дата.</p>
+                        ) : null}
+                      </div>
+
+                      <div>
+                        <label htmlFor="contact-format" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
+                          ФОРМАТ
+                        </label>
+                        <input
+                          id="contact-format"
+                          className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
+                          placeholder="Сватба / събитие / концерт / заведение"
+                          value={performanceFormat}
+                          onChange={(e) => setPerformanceFormat(e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -300,18 +515,27 @@ const ContactSection = () => {
                       ? "Цел, възраст (ако е дете), предишен опит и предпочитани часове..."
                       : "Повод, програма/стил, технически изисквания и бюджет/условия (ако има)..."
                   }
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
               </div>
 
               <button
                 type="button"
+                onClick={onSubmit}
                 className="w-full rounded-md bg-gold px-6 py-3 text-sm font-semibold text-wine transition hover:bg-gold/90"
               >
-                {mode === "lessons" ? "Изпрати запитване за урок (тест)" : "Изпрати запитване за участие (тест)"}
+                {mode === "lessons" ? "Изпрати запитване за урок" : "Изпрати запитване за участие"}
               </button>
 
+              {submitError ? (
+                <p className="text-xs text-destructive">{submitError}</p>
+              ) : submitOk ? (
+                <p className="text-xs text-foreground/70">Запитването е записано. Очаквай отговор.</p>
+              ) : null}
+
               <p className="text-xs text-foreground/60">
-                Формата е тестова и не изпраща реални имейли. При готовност ще я вържем към EmailJS / Formspree.
+                Формата записва заявка (pending). При готовност ще добавим админ панел и известяване по имейл.
               </p>
             </form>
           </div>

@@ -14,7 +14,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-wine/70 backdrop-blur supports-[backdrop-filter]:bg-wine/60">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-wine/70 backdrop-blur supports-[backdrop-filter]:bg-wine/60">
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-3">
           <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gold/40 bg-white/5">
