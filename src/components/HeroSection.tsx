@@ -48,19 +48,19 @@ const HeroSection = () => {
               className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Елегантност в операта.
+              Глас от Операта.
             </p>
             <p
               className="font-display text-4xl italic leading-[1.02] text-gold md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Магия с флейтата.
+              Душа във флейтата.
             </p>
             <p
               className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Цял живот в музиката.
+              Цял живот в изкуството.
             </p>
           </div>
 

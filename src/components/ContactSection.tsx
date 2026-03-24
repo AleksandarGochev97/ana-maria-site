@@ -51,7 +51,7 @@ const ContactSection = () => {
     FALLBACK_SUPABASE_ANON_KEY;
 
   const [lessonDate, setLessonDate] = useState<string>(getTodayIso());
-  const [lessonTime, setLessonTime] = useState<string>("");
+  const [lessonTimes, setLessonTimes] = useState<string[]>([]);
 
   const [performanceDate, setPerformanceDate] = useState<string>(getTodayIso());
   const [performanceTime, setPerformanceTime] = useState<string>("");
@@ -83,6 +83,14 @@ const ContactSection = () => {
   };
 
   const bookedTimeSet = useMemo(() => new Set(bookedTimes), [bookedTimes]);
+
+  const submitDisabled =
+    !name.trim() ||
+    !email.trim() ||
+    !selectedDate ||
+    (mode === "lessons"
+      ? lessonTimes.length === 0
+      : !performanceTime || !performanceLocation.trim() || !performanceFormat.trim());
 
   const fetchAvailability = async (date: string, type: BookingType) => {
     if (!canUseSupabase || !supabaseUrl || !supabaseAnonKey) return;
@@ -124,7 +132,7 @@ const ContactSection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, bookingType, canUseSupabase]);
 
-  const createBooking = async (payload: Record<string, unknown>) => {
+  const createBooking = async (payload: Record<string, unknown> | Record<string, unknown>[]) => {
     if (!canUseSupabase || !supabaseUrl || !supabaseAnonKey) {
       throw new Error("Supabase не е конфигуриран. Добави VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY.");
     }
@@ -157,19 +165,26 @@ const ContactSection = () => {
     setSubmitError(null);
 
     const date = selectedDate;
-    const time = mode === "lessons" ? lessonTime : performanceTime;
+    const time = mode === "lessons" ? "" : performanceTime;
 
     if (!name.trim()) return setSubmitError("Моля, въведи име.");
     if (!email.trim()) return setSubmitError("Моля, въведи имейл.");
     if (!date) return setSubmitError("Моля, избери дата.");
-    if (!time) return setSubmitError("Моля, избери час.");
-    if (bookedTimeSet.has(time)) return setSubmitError("Този час вече е зает. Избери друг.");
+    if (mode === "lessons" && lessonTimes.length === 0) return setSubmitError("Моля, избери час.");
+    if (mode === "performances" && !performanceTime) return setSubmitError("Моля, избери час.");
+    if (mode === "performances" && !performanceLocation.trim()) return setSubmitError("Моля, въведи локация/град.");
+    if (mode === "performances" && !performanceFormat.trim()) return setSubmitError("Моля, въведи формат.");
+    if (mode === "lessons" && lessonTimes.some((t) => bookedTimeSet.has(t))) {
+      return setSubmitError("Един или повече от избраните часове вече са заети. Избери други.");
+    }
+    if (mode === "performances" && bookedTimeSet.has(performanceTime)) {
+      return setSubmitError("Този час вече е зает. Избери друг.");
+    }
 
     try {
-      await createBooking({
+      const base = {
         booking_type: bookingType,
         date,
-        time,
         status: "pending" satisfies BookingStatus,
         name: name.trim(),
         email: email.trim(),
@@ -179,10 +194,16 @@ const ContactSection = () => {
         availability_other: bookingType === "lesson" ? availabilityOther.trim() : null,
         location: bookingType === "performance" ? performanceLocation.trim() : null,
         format: bookingType === "performance" ? performanceFormat.trim() : null,
-      });
+      };
+
+      if (mode === "lessons") {
+        await createBooking(lessonTimes.map((t) => ({ ...base, time: t })));
+      } else {
+        await createBooking({ ...base, time: performanceTime });
+      }
 
       setSubmitOk(true);
-      setLessonTime("");
+      setLessonTimes([]);
       setPerformanceTime("");
       setMessage("");
 
@@ -200,14 +221,15 @@ const ContactSection = () => {
       </div>
 
       <div className="container">
-        <div className="grid gap-10 md:grid-cols-2 md:items-start">
-          <div>
-            <p className="text-xs font-medium tracking-[0.32em] text-warm-gray">КОНТАКТ</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Запитване</h2>
-            <div className="mt-3 h-px w-16 bg-gold/70" />
-            <p className="mt-4 text-sm leading-relaxed text-foreground/80 md:text-base">
-              Избери повод и изпрати кратко запитване. Отговарям с възможни часове или с уточняващи въпроси.
-            </p>
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="rounded-[1.75rem] border border-border/70 bg-card/70 p-6 shadow-sm md:p-8">
+            <div className="text-center">
+              <h2 className="mt-3 font-display text-3xl md:text-4xl">Запитване</h2>
+              <div className="mx-auto mt-3 h-px w-16 bg-gold/70" />
+              <p className="mt-4 text-sm leading-relaxed text-foreground/80 md:text-base">
+                Избери повод и изпрати кратко запитване. Отговарям с възможни часове или с уточняващи въпроси.
+              </p>
+            </div>
 
             <div className="mt-7 rounded-[1.5rem] border border-border/70 bg-card/70 p-2 shadow-sm">
               <div className="grid grid-cols-2 gap-2">
@@ -238,40 +260,11 @@ const ContactSection = () => {
               </div>
             </div>
 
-            <div className="mt-7 grid gap-4">
-              <div className="rounded-[1.5rem] border border-border/70 bg-card/70 p-6 shadow-sm">
-                <p className="text-xs font-medium tracking-[0.32em] text-warm-gray">INSTAGRAM</p>
-                <a
-                  href="https://instagram.com/anamariakraycheva"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 inline-block font-medium text-primary hover:underline"
-                >
-                  @anamariakraycheva
-                </a>
-                <p className="mt-3 text-sm text-foreground/70">Град: София</p>
-              </div>
-
-              <div className="rounded-[1.5rem] border border-border/70 bg-wine/5 p-6 shadow-sm">
-                <p className="text-xs font-medium tracking-[0.32em] text-warm-gray">БЪРЗО</p>
-                <p className="mt-3 font-display text-xl">
-                  {mode === "lessons" ? "За свободни часове" : "За участие/концерт"}
-                </p>
-                <p className="mt-1 text-sm text-foreground/70">
-                  {mode === "lessons"
-                    ? "Посочи инструмент и предпочитани дни/часове."
-                    : "Посочи дата, локация и формат (рецитал/събитие/програма)."}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-[1.75rem] border border-border/70 bg-card/70 p-6 shadow-sm md:p-8">
             <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label htmlFor="contact-name" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                    ИМЕ
+                    ИМЕ <span className="text-destructive">*</span>
                   </label>
                   <input
                     id="contact-name"
@@ -284,7 +277,7 @@ const ContactSection = () => {
 
                 <div>
                   <label htmlFor="contact-email" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                    ИМЕЙЛ
+                    ИМЕЙЛ <span className="text-destructive">*</span>
                   </label>
                   <input
                     id="contact-email"
@@ -305,7 +298,7 @@ const ContactSection = () => {
                         htmlFor="contact-instrument"
                         className="text-xs font-medium tracking-[0.22em] text-warm-gray"
                       >
-                        ИНСТРУМЕНТ
+                        ВИД УРОК <span className="text-destructive">*</span>
                       </label>
                       <select
                         id="contact-instrument"
@@ -347,7 +340,7 @@ const ContactSection = () => {
                             htmlFor="lesson-date"
                             className="text-xs font-medium tracking-[0.22em] text-warm-gray"
                           >
-                            ДАТА
+                            ДАТА <span className="text-destructive">*</span>
                           </label>
                           <input
                             id="lesson-date"
@@ -356,14 +349,16 @@ const ContactSection = () => {
                             value={lessonDate}
                             onChange={(e) => {
                               setLessonDate(e.target.value);
-                              setLessonTime("");
+                              setLessonTimes([]);
                             }}
                             className="mt-2 w-full rounded-xl border border-border/70 bg-background/70 px-4 py-3 text-sm outline-none ring-0 transition focus:border-primary focus:bg-background"
                           />
                         </div>
 
                         <div>
-                          <p className="text-xs font-medium tracking-[0.22em] text-warm-gray">СВОБОДНИ ЧАСОВЕ</p>
+                          <p className="text-xs font-medium tracking-[0.22em] text-warm-gray">
+                            СВОБОДНИ ЧАСОВЕ <span className="text-destructive">*</span>
+                          </p>
                           <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
                             {timeSlots.map((slot) => {
                               const now = new Date();
@@ -375,14 +370,26 @@ const ContactSection = () => {
                               const isPastForToday = lessonDate === todayIso && slotDate.getTime() <= now.getTime();
                               const isBooked = bookedTimeSet.has(slot);
                               const unavailable = isPastForToday || isBooked;
-                              const active = lessonTime === slot;
+                              const active = lessonTimes.includes(slot);
 
                               return (
                                 <button
                                   key={slot}
                                   type="button"
                                   disabled={unavailable}
-                                  onClick={() => setLessonTime(slot)}
+                                  onClick={() => {
+                                    setSubmitError(null);
+                                    setSubmitOk(false);
+
+                                    setLessonTimes((prev) => {
+                                      if (prev.includes(slot)) return prev.filter((t) => t !== slot);
+                                      if (prev.length >= 3) {
+                                        setSubmitError("Можеш да избереш до 3 часа наведнъж.");
+                                        return prev;
+                                      }
+                                      return [...prev, slot];
+                                    });
+                                  }}
                                   className={
                                     "rounded-lg border px-3 py-2 text-xs font-semibold tracking-[0.12em] transition " +
                                     (unavailable
@@ -424,9 +431,9 @@ const ContactSection = () => {
                           onChange={(e) => setAvailabilityOther(e.target.value)}
                         />
 
-                        {(lessonDate || lessonTime) && (
+                        {(lessonDate || lessonTimes.length > 0) && (
                           <p className="mt-2 text-xs text-foreground/60">
-                            Избрано: {lessonDate ? lessonDate : "—"} • {lessonTime ? lessonTime : "час"}
+                            Избрано: {lessonDate ? lessonDate : "—"} • {lessonTimes.length ? lessonTimes.join(", ") : "час"}
                           </p>
                         )}
                       </div>
@@ -438,7 +445,7 @@ const ContactSection = () => {
                   <div className="grid gap-5 md:grid-cols-2">
                     <div>
                       <label htmlFor="contact-date" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                        ДАТА
+                        ДАТА <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="contact-date"
@@ -457,7 +464,7 @@ const ContactSection = () => {
                         htmlFor="contact-location"
                         className="text-xs font-medium tracking-[0.22em] text-warm-gray"
                       >
-                        ЛОКАЦИЯ/ГРАД
+                        ЛОКАЦИЯ/ГРАД <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="contact-location"
@@ -472,7 +479,7 @@ const ContactSection = () => {
                     <div className="grid gap-5 md:grid-cols-2">
                       <div>
                         <label htmlFor="contact-performance-time" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                          ЧАС (НАЧАЛО)
+                          ЧАС (НАЧАЛО) <span className="text-destructive">*</span>
                         </label>
                         <input
                           id="contact-performance-time"
@@ -488,7 +495,7 @@ const ContactSection = () => {
 
                       <div>
                         <label htmlFor="contact-format" className="text-xs font-medium tracking-[0.22em] text-warm-gray">
-                          ФОРМАТ
+                          ФОРМАТ <span className="text-destructive">*</span>
                         </label>
                         <input
                           id="contact-format"
@@ -523,7 +530,13 @@ const ContactSection = () => {
               <button
                 type="button"
                 onClick={onSubmit}
-                className="w-full rounded-md bg-gold px-6 py-3 text-sm font-semibold text-wine transition hover:bg-gold/90"
+                disabled={submitDisabled}
+                className={
+                  "w-full rounded-md px-6 py-3 text-sm font-semibold transition " +
+                  (submitDisabled
+                    ? "cursor-not-allowed bg-gold/40 text-wine/60"
+                    : "bg-gold text-wine hover:bg-gold/90")
+                }
               >
                 {mode === "lessons" ? "Изпрати запитване за урок" : "Изпрати запитване за участие"}
               </button>
@@ -538,6 +551,7 @@ const ContactSection = () => {
                 Формата записва заявка (pending). При готовност ще добавим админ панел и известяване по имейл.
               </p>
             </form>
+
           </div>
         </div>
       </div>
