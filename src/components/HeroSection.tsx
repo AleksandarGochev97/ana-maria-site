@@ -35,7 +35,7 @@ const HeroSection = () => {
             className="mt-7 font-display text-4xl leading-[1.02] text-ivory md:text-6xl"
             style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
           >
-            Ана-Мария Крайчева
+            {t("name")}
           </h1>
 
           <p className="mt-3 text-[11px] font-medium tracking-[0.34em] text-gold/90 md:text-xs">

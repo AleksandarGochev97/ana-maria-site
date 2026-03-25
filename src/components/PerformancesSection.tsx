@@ -4,18 +4,9 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useT } from "@/i18n/useT";
 
 const videos = [
-  {
-    title: "Ана-Мария Крайчева — Видео",
-    id: "dX06UCts2dU",
-  },
-  {
-    title: "Ана-Мария Крайчева — Видео 2",
-    id: "JTfDUl0GS84",
-  },
-  {
-    title: "Ана-Мария Крайчева — Видео 3",
-    id: "7-MXugyB_88",
-  },
+  { titleKey: "video.title1", id: "dX06UCts2dU" },
+  { titleKey: "video.title2", id: "JTfDUl0GS84" },
+  { titleKey: "video.title3", id: "7-MXugyB_88" },
 ];
 
 const PerformancesSection = () => {
@@ -54,7 +45,7 @@ const PerformancesSection = () => {
                         <iframe
                           className="h-full w-full"
                           src={`https://www.youtube.com/embed/${v.id}?autoplay=1`}
-                          title={v.title}
+                          title={t(v.titleKey)}
                           loading="lazy"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                           referrerPolicy="strict-origin-when-cross-origin"
@@ -63,13 +54,13 @@ const PerformancesSection = () => {
                       ) : (
                         <button
                           type="button"
-                          aria-label={`${t("performances.play")} ${v.title}`}
+                          aria-label={`${t("performances.play")} ${t(v.titleKey)}`}
                           onClick={() => setActiveVideoId(v.id)}
                           className="group relative h-full w-full"
                         >
                           <img
                             src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`}
-                            alt={v.title}
+                            alt={t(v.titleKey)}
                             loading="lazy"
                             draggable={false}
                             className="h-full w-full object-cover"
@@ -84,7 +75,7 @@ const PerformancesSection = () => {
                       )}
                     </div>
                     <div className="p-4">
-                      <p className="text-sm font-medium text-foreground">{v.title}</p>
+                      <p className="text-sm font-medium text-foreground">{t(v.titleKey)}</p>
                       <p className="mt-1 text-xs text-foreground/65">YouTube</p>
                     </div>
                   </div>
