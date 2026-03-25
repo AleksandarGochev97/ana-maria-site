@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# При смяна на домейн, обнови URL-а по-долу
+Sitemap: https://anamariakraycheva.com/sitemap.xml

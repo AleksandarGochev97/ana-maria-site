@@ -3,21 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#5B2333" />
+
+    <!-- SEO: при смяна на домейн, обнови САМО тези два реда -->
+    <link rel="canonical" href="https://anamariakraycheva.com/" />
+    <meta property="og:url" content="https://anamariakraycheva.com/" />
+
+    <title>Ана-Мария Крайчева — Оперна певица, Флейтист, Пианист | Sofia</title>
+    <meta name="description" content="Ана-Мария Крайчева е оперна певица, флейтист и пианист с над 20 години опит. Концерти, камерна музика и уроци по флейта, пиано, солфеж и оперно пеене в София." />
+    <meta name="author" content="Ана-Мария Крайчева" />
+    <meta name="keywords" content="Ана-Мария Крайчева, оперна певица, флейтист, пианист, уроци по флейта София, уроци по пиано София, солфеж, оперно пеене, концерти, камерна музика, Ana-Maria Kraycheva, opera singer Sofia, flute lessons, piano lessons" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
-    <title>Ana Maria Kraycheva — Opera & Jazz Singer, Flutist, Pianist</title>
-    <meta name="description" content="Professional musician offering opera and jazz performances, flute and piano recitals, and expert music lessons for all ages." />
-    <meta name="author" content="Ana Maria Kraycheva" />
 
-    <meta property="og:title" content="Ana Maria Kraycheva — Opera & Jazz Singer, Flutist, Pianist" />
-    <meta property="og:description" content="Professional musician offering opera and jazz performances, flute and piano recitals, and expert music lessons for all ages." />
+    <!-- Open Graph -->
+    <meta property="og:title" content="Ана-Мария Крайчева — Оперна певица, Флейтист, Пианист" />
+    <meta property="og:description" content="Концерти, камерна музика и уроци по флейта, пиано, солфеж и оперно пеене в София. 20+ години опит." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:locale" content="bg_BG" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:image" content="/ani.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Ана-Мария Крайчева" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="Ана-Мария Крайчева — Оперна певица, Флейтист, Пианист" />
+    <meta name="twitter:description" content="Концерти, камерна музика и уроци по флейта, пиано, солфеж и оперно пеене в София." />
+    <meta name="twitter:image" content="/ani.jpg" />
+
+    <!-- Structured Data: Person + MusicGroup (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Ана-Мария Крайчева",
+      "alternateName": "Ana-Maria Kraycheva",
+      "url": "https://anamariakraycheva.com/",
+      "image": "/ani.jpg",
+      "jobTitle": ["Opera singer", "Flautist", "Pianist", "Music teacher"],
+      "description": "Оперна певица, флейтист и пианист с над 20 години опит. Концерти, камерна музика и уроци в София.",
+      "knowsLanguage": ["bg", "en", "it"],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "София",
+        "addressCountry": "BG"
+      },
+      "sameAs": [
+        "https://instagram.com/anamariakraycheva"
+      ]
+    }
+    </script>
   </head>
 
   <body>

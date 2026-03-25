@@ -3,6 +3,13 @@ export type Language = "bg" | "en" | "it";
 export type Translations = Record<string, Record<Language, string>>;
 
 export const translations: Translations = {
+  // Common
+  "name": { bg: "Ана-Мария Крайчева", en: "Ana-Maria Kraycheva", it: "Ana-Maria Kraycheva" },
+  "name.nav": { bg: "♪ Ана-Мария Крайчева", en: "♪ Ana-Maria Kraycheva", it: "♪ Ana-Maria Kraycheva" },
+  "video.title1": { bg: "Ана-Мария Крайчева — Видео", en: "Ana-Maria Kraycheva — Video", it: "Ana-Maria Kraycheva — Video" },
+  "video.title2": { bg: "Ана-Мария Крайчева — Видео 2", en: "Ana-Maria Kraycheva — Video 2", it: "Ana-Maria Kraycheva — Video 2" },
+  "video.title3": { bg: "Ана-Мария Крайчева — Видео 3", en: "Ana-Maria Kraycheva — Video 3", it: "Ana-Maria Kraycheva — Video 3" },
+
   // Navbar
   "nav.home": { bg: "НАЧАЛО", en: "HOME", it: "HOME" },
   "nav.about": { bg: "ЗА МЕН", en: "ABOUT", it: "CHI SONO" },

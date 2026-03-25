@@ -13,6 +13,7 @@ const navKeys = [
 ];
 
 const flags: { lang: Language; label: string; icon: string }[] = [
+  { lang: "bg", label: "Български", icon: "🇧🇬" },
   { lang: "en", label: "English", icon: "🇬🇧" },
   { lang: "it", label: "Italiano", icon: "🇮🇹" },
 ];
@@ -45,7 +46,7 @@ const Navbar = () => {
 
           <div className="leading-tight">
             <div className="font-display text-sm tracking-wide text-ivory md:text-base">
-              ♪ Ана-Мария Крайчева
+              {t("name.nav")}
             </div>
             <div className="hidden text-xs text-ivory/65 md:block">
               {t("nav.subtitle")}
@@ -72,7 +73,7 @@ const Navbar = () => {
                 key={f.lang}
                 type="button"
                 aria-label={f.label}
-                onClick={() => setLanguage(language === f.lang ? "bg" : f.lang)}
+                onClick={() => setLanguage(f.lang)}
                 className={
                   "rounded-md px-1.5 py-1 text-base leading-none transition " +
                   (language === f.lang
