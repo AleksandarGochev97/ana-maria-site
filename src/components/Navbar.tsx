@@ -38,7 +38,7 @@ const Navbar = () => {
               ♪ Ана-Мария Крайчева
             </div>
             <div className="hidden text-xs text-ivory/65 md:block">
-              Оперна певица • Флейтистка • Пианистка
+              Оперна певица • Флейтист • Пианист
             </div>
           </div>
         </a>

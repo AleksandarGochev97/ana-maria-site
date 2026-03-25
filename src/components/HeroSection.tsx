@@ -37,10 +37,10 @@ const HeroSection = () => {
           <p className="mt-3 text-[11px] font-medium tracking-[0.34em] text-gold/90 md:text-xs">
             ОПЕРНА ПЕВИЦА •{" "}
             <span className="relative inline-block px-1">
-              ФЛЕЙТИСТКА
+              ФЛЕЙТИСТ
               <span className="absolute left-1/2 top-full mt-2 h-px w-10 -translate-x-1/2 bg-gold/70" />
             </span>{" "}
-            • ПИАНИСТКА
+            • ПИАНИСТ
           </p>
 
           <div className="mt-8 space-y-2">

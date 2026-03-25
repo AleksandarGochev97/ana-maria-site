@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="grid gap-6">
           <div className="text-center">
             <p className="font-display text-lg">Ана-Мария Крайчева</p>
-            <p className="mt-2 text-sm text-foreground/70">Флейтистка • Оперна певица • Пианистка</p>
+            <p className="mt-2 text-sm text-foreground/70">Флейтист • Оперна певица • Пианист</p>
           </div>
 
           <div className="text-center text-xs text-foreground/70">
