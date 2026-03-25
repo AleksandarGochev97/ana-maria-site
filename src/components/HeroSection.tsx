@@ -1,4 +1,8 @@
+import { useT } from "@/i18n/useT";
+
 const HeroSection = () => {
+  const t = useT();
+
   return (
     <section className="relative isolate overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -35,12 +39,12 @@ const HeroSection = () => {
           </h1>
 
           <p className="mt-3 text-[11px] font-medium tracking-[0.34em] text-gold/90 md:text-xs">
-            ОПЕРНА ПЕВИЦА •{" "}
+            {t("hero.roles")} •{" "}
             <span className="relative inline-block px-1">
-              ФЛЕЙТИСТ
+              {t("hero.roles.flute")}
               <span className="absolute left-1/2 top-full mt-2 h-px w-10 -translate-x-1/2 bg-gold/70" />
             </span>{" "}
-            • ПИАНИСТ
+            • {t("hero.roles.piano")}
           </p>
 
           <div className="mt-8 space-y-2">
@@ -48,19 +52,19 @@ const HeroSection = () => {
               className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Глас от Операта.
+              {t("hero.line1")}
             </p>
             <p
               className="font-display text-4xl italic leading-[1.02] text-gold md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Душа във флейтата.
+              {t("hero.line2")}
             </p>
             <p
               className="font-display text-4xl leading-[1.02] text-ivory md:text-7xl"
               style={{ textShadow: "0 18px 70px rgba(0,0,0,0.55)" }}
             >
-              Цял живот в изкуството.
+              {t("hero.line3")}
             </p>
           </div>
 
@@ -69,13 +73,13 @@ const HeroSection = () => {
               href="#performances"
               className="w-full rounded-md bg-gold px-8 py-3 text-sm font-semibold text-wine transition hover:bg-gold/90 sm:w-auto"
             >
-              ИЗПЪЛНЕНИЯ
+              {t("hero.cta.performances")}
             </a>
             <a
               href="#contact"
               className="w-full rounded-md border border-ivory/25 bg-white/5 px-8 py-3 text-sm font-semibold text-ivory transition hover:bg-white/10 sm:w-auto"
             >
-              РЕЗЕРВИРАЙ
+              {t("hero.cta.book")}
             </a>
           </div>
         </div>

@@ -1,15 +1,19 @@
+import { useT } from "@/i18n/useT";
+
 const Footer = () => {
+  const t = useT();
+
   return (
     <footer className="border-t border-border/60 bg-background">
       <div className="container py-10">
         <div className="grid gap-6">
           <div className="text-center">
             <p className="font-display text-lg">Ана-Мария Крайчева</p>
-            <p className="mt-2 text-sm text-foreground/70">Флейтист • Оперна певица • Пианист</p>
+            <p className="mt-2 text-sm text-foreground/70">{t("footer.subtitle")}</p>
           </div>
 
           <div className="text-center text-xs text-foreground/70">
-            <p className="mb-3 text-[10px] font-medium tracking-[0.32em] text-warm-gray">КОНТАКТ</p>
+            <p className="mb-3 text-[10px] font-medium tracking-[0.32em] text-warm-gray">{t("footer.contact")}</p>
             <div className="grid gap-2">
               <a
                 href="https://instagram.com/anamariakraycheva"
@@ -33,7 +37,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 text-xs text-foreground/60">
-          © {new Date().getFullYear()} Ana-Maria Kraycheva. All rights reserved.
+          © {new Date().getFullYear()} Ana-Maria Kraycheva. {t("footer.rights")}
         </div>
       </div>
     </footer>

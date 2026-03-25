@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
+import { useT } from "@/i18n/useT";
+
 const videos = [
   {
     title: "Ана-Мария Крайчева — Видео",
@@ -17,6 +19,7 @@ const videos = [
 ];
 
 const PerformancesSection = () => {
+  const t = useT();
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
@@ -31,9 +34,9 @@ const PerformancesSection = () => {
     <section id="performances" className="border-y border-border/60 bg-secondary/30">
       <div className="container py-16 md:py-20">
         <div className="max-w-2xl">
-          <h2 className="font-display text-3xl md:text-4xl">Изпълнения</h2>
+          <h2 className="font-display text-3xl md:text-4xl">{t("performances.title")}</h2>
           <p className="mt-4 text-sm leading-relaxed text-foreground/75 md:text-base">
-            Подбрани видео записи. По-късно можем да добавим още изпълнения, програми, участия и архив.
+            {t("performances.body")}
           </p>
         </div>
 
@@ -60,7 +63,7 @@ const PerformancesSection = () => {
                       ) : (
                         <button
                           type="button"
-                          aria-label={`Пусни: ${v.title}`}
+                          aria-label={`${t("performances.play")} ${v.title}`}
                           onClick={() => setActiveVideoId(v.id)}
                           className="group relative h-full w-full"
                         >
@@ -92,7 +95,7 @@ const PerformancesSection = () => {
 
           <button
             type="button"
-            aria-label="Предишно видео"
+            aria-label={t("performances.prev")}
             onClick={scrollPrev}
             className="absolute left-0 top-1/2 hidden -translate-x-1/3 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-card/80 px-3 py-3 text-sm shadow-sm backdrop-blur transition hover:bg-card md:inline-flex"
           >
@@ -100,7 +103,7 @@ const PerformancesSection = () => {
           </button>
           <button
             type="button"
-            aria-label="Следващо видео"
+            aria-label={t("performances.next")}
             onClick={scrollNext}
             className="absolute right-0 top-1/2 hidden translate-x-1/3 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-card/80 px-3 py-3 text-sm shadow-sm backdrop-blur transition hover:bg-card md:inline-flex"
           >

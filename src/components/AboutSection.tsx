@@ -1,32 +1,34 @@
+import { useT } from "@/i18n/useT";
+
 const AboutSection = () => {
+  const t = useT();
+
   return (
     <section id="about" className="container py-16 md:py-20">
       <div className="grid gap-10 md:grid-cols-2 md:items-center">
         <div>
-          <h2 className="font-display text-3xl md:text-4xl">За Ана-Мария</h2>
+          <h2 className="font-display text-3xl md:text-4xl">{t("about.title")}</h2>
           <p className="mt-4 text-sm leading-relaxed text-foreground/80 md:text-base">
-            Ана-Мария Крайчева е флейтистка, оперна певица и пианистка с над 20 години опит.
-            Със съчетание от сценично присъствие, музикална елегантност и педагогически подход,
-            тя изгражда репертоар и ученици с внимание към стила, техниката и артистичния разказ.
+            {t("about.body")}
           </p>
 
           <div className="mt-6 rounded-2xl border border-border/70 bg-card/60 p-6">
-            <p className="text-xs tracking-[0.25em] text-foreground/70">АКЦЕНТИ</p>
+            <p className="text-xs tracking-[0.25em] text-foreground/70">{t("about.highlights")}</p>
             <div className="mt-4 grid gap-4 text-sm text-foreground/80">
               <div>
-                <p className="font-medium text-foreground">Образование</p>
+                <p className="font-medium text-foreground">{t("about.edu")}</p>
                 <p className="mt-1 text-foreground/70">
-                  3 висши образования в областта на музиката (детайлите могат да се добавят по-късно).
+                  {t("about.edu.body")}
                 </p>
               </div>
               <div>
-                <p className="font-medium text-foreground">Езици</p>
-                <p className="mt-1 text-foreground/70">Български • Италиански • Английски</p>
+                <p className="font-medium text-foreground">{t("about.lang")}</p>
+                <p className="mt-1 text-foreground/70">{t("about.lang.body")}</p>
               </div>
               <div>
-                <p className="font-medium text-foreground">Работа</p>
+                <p className="font-medium text-foreground">{t("about.work")}</p>
                 <p className="mt-1 text-foreground/70">
-                  Изпълнения, камерни проекти и преподаване по флейта, пиано, солфеж и оперно пеене.
+                  {t("about.work.body")}
                 </p>
               </div>
             </div>

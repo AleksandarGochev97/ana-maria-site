@@ -1,3 +1,5 @@
+import { useT } from "@/i18n/useT";
+
 const images = [
   "https://images.unsplash.com/photo-1458560871784-56d23406c091?auto=format&fit=crop&w=1600&q=80",
   "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80",
@@ -8,13 +10,15 @@ const images = [
 ];
 
 const GallerySection = () => {
+  const t = useT();
+
   return (
     <section id="gallery" className="border-y border-border/60 bg-secondary/30">
       <div className="container py-16 md:py-20">
         <div className="max-w-2xl">
-          <h2 className="font-display text-3xl md:text-4xl">Галерия</h2>
+          <h2 className="font-display text-3xl md:text-4xl">{t("gallery.title")}</h2>
           <p className="mt-4 text-sm leading-relaxed text-foreground/75 md:text-base">
-            Тестова галерия. По-късно ще я заменим с професионални снимки от сцена, репетиции и проекти.
+            {t("gallery.body")}
           </p>
         </div>
 
